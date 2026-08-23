@@ -1,11 +1,10 @@
 package io.ticofab.androidgpxparser.parser;
 
-import android.util.Xml;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,11 +75,14 @@ public class GPXParser {
 
     public Gpx parse(InputStream in) throws XmlPullParserException, IOException {
         try {
-            XmlPullParser parser = Xml.newPullParser();
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XmlPullParser parser = factory.newPullParser();
             parser.setInput(in, null);
             parser.nextTag();
             return readGpx(parser);
+        } catch (java.io.EOFException e) {
+            throw new XmlPullParserException("Unexpected end of document", null, e);
         } finally {
             in.close();
         }

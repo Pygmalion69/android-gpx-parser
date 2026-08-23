@@ -1,14 +1,7 @@
 package io.ticofab.androidgpxparser.parser;
 
-import android.content.res.AssetManager;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.MediumTest;
-import androidx.test.platform.app.InstrumentationRegistry;
-
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -26,20 +19,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-@MediumTest
-@RunWith(AndroidJUnit4.class)
 public class GPXParserTest {
 
     @Test
     public void testShoresOfDerwentwater() throws IOException, XmlPullParserException {
-        InputStream input = getAssets().open("shores-of-derwentwater.xml");
+        InputStream input = getInputStream("shores-of-derwentwater.xml");
         Gpx gpx = new GPXParser().parse(input);
         assertNotNull(gpx); // testing that there is no crash, really
     }
 
     @Test
     public void testWadlbeisserExport() throws IOException, XmlPullParserException {
-        InputStream input = getAssets().open("wadlbeisserExport.gpx");
+        InputStream input = getInputStream("wadlbeisserExport.gpx");
         Gpx gpx = new GPXParser().parse(input);
         assertEquals(0, gpx.getTracks().size());
         assertEquals(2, gpx.getWayPoints().size());
@@ -49,7 +40,7 @@ public class GPXParserTest {
 
     @Test
     public void testGarminBaseCampExport() throws IOException, XmlPullParserException {
-        InputStream input = getAssets().open("garminBaseCampExport.gpx");
+        InputStream input = getInputStream("garminBaseCampExport.gpx");
         Gpx gpx = new GPXParser().parse(input);
         assertEquals("http://www.garmin.com", gpx.getMetadata().getLink().getHref());
         assertEquals("Garmin International", gpx.getMetadata().getLink().getText());
@@ -68,20 +59,20 @@ public class GPXParserTest {
 
     @Test(expected = XmlPullParserException.class)
     public void testGarminBaseCampExportTruncated() throws IOException, XmlPullParserException {
-        InputStream input = getAssets().open("garminBaseCampExport-truncated.gpx");
+        InputStream input = getInputStream("garminBaseCampExport-truncated.gpx");
         new GPXParser().parse(input);
     }
 
     @Test(expected = XmlPullParserException.class)
     public void testGarminBaseCampExportNoClosingTag() throws IOException, XmlPullParserException {
-        InputStream input = getAssets().open("garminBaseCampExport-noclosingtag.gpx");
+        InputStream input = getInputStream("garminBaseCampExport-noclosingtag.gpx");
         Gpx gpx = new GPXParser().parse(input);
         assertEquals(1, gpx.getTracks().size());
     }
 
     @Test
     public void testFullMetadataParsing() throws IOException, XmlPullParserException {
-        InputStream input = getAssets().open("metadata-full.gpx");
+        InputStream input = getInputStream("metadata-full.gpx");
         Gpx gpx = new GPXParser().parse(input);
 
         final Metadata metadata = gpx.getMetadata();
@@ -126,7 +117,7 @@ public class GPXParserTest {
 
     @Test
     public void testMinimalMetadataParsing() throws IOException, XmlPullParserException {
-        InputStream input = getAssets().open("metadata-minimal.gpx");
+        InputStream input = getInputStream("metadata-minimal.gpx");
         Gpx gpx = new GPXParser().parse(input);
 
         final Metadata metadata = gpx.getMetadata();
@@ -144,7 +135,7 @@ public class GPXParserTest {
         assertNull(copyright.getLicense());
     }
 
-    public AssetManager getAssets() {
-        return InstrumentationRegistry.getInstrumentation().getContext().getAssets();
+    private InputStream getInputStream(String fileName) {
+        return getClass().getClassLoader().getResourceAsStream(fileName);
     }
 }
