@@ -3,6 +3,9 @@ plugins {
     id 'maven-publish'
 }
 
+group = 'com.github.Pygmalion69'
+version = '2.4.1'
+
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
@@ -19,6 +22,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifactId = 'android-gpx-parser'
         }
     }
 }

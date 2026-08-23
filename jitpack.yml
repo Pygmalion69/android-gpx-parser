@@ -1,2 +1,8 @@
 jdk:
  - openjdk11
+
+before_install:
+ - chmod +x gradlew
+
+install:
+ - ./gradlew :parser:clean :parser:test :parser:build :parser:publishToMavenLocal
